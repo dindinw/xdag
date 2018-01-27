@@ -38,6 +38,13 @@ sources = \
 	$(dfstools)/lib/dfsrsa.c	\
 	$(dar)/lib/crc_c.c			\
 
+asm_src = \
+	sha256-mb-x86_64.s					\
+	x86_64cpuid.s					\
+
+asm_mac_src = \
+	sha256-mb-x86_64-mac.s					\
+	x86_64cpuid-mac.s					\
 
 headers = \
 	address.h						\
@@ -84,11 +91,11 @@ flags_mac = -std=gnu11 -O3 -DDFSTOOLS -DCHEATCOIN -DNDEBUG -g -lpthread -lcrypto
 
 all: xdag
 
-xdag: $(sources) $(headers) Makefile
-	gcc -o xdag $(sources) -DSHA256_USE_OPENSSL_TXFM -DSHA256_OPENSSL_MBLOCK $(flags)
+xdag: $(sources) $(asm_src) $(headers) Makefile
+	gcc -o xdag $(sources) $(asm_src) -DSHA256_USE_OPENSSL_TXFM -DSHA256_OPENSSL_MBLOCK $(flags)
 
-xdag_mac: $(sources) $(headers) Makefile
-	gcc -o xdag $(sources) -DSHA256_USE_OPENSSL_TXFM -DSHA256_OPENSSL_MBLOCK $(flags_mac) -I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib 
+xdag_mac: $(sources) $(asm_mac_src) $(headers) Makefile
+	gcc -o xdag $(sources) $(asm_mac_src) -DSHA256_USE_OPENSSL_TXFM -DSHA256_OPENSSL_MBLOCK $(flags_mac) -I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib 
 clean:
 	rm xdag
 
