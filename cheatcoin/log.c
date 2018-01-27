@@ -72,9 +72,68 @@ extern int cheatcoin_set_log_level(int level) {
 #include <signal.h>
 #include <unistd.h>
 #include <execinfo.h>
+
+#ifdef linux
 #include <ucontext.h>
 
-#define REG_(name) sprintf(buf + strlen(buf), #name "=%llx, ", (unsigned long long)uc->uc_mcontext.gregs[REG_##name])
+#define RIP_sig(context)     ((context)->uc_mcontext.gregs[REG_RIP])
+#define EFL_sig(context)     ((context)->uc_mcontext.gregs[REG_EFL])
+#define ERR_sig(context)     ((context)->uc_mcontext.gregs[REG_ERR])
+#define TRAP_sig(context)    ((context)->uc_mcontext.gregs[REG_TRAPNO])
+#define CR2_sig(context) ((char *)context->uc_mcontext.gregs[REG_CR2])
+
+#define RAX_sig(context)     ((context)->uc_mcontext.gregs[REG_RAX])
+#define RBX_sig(context)     ((context)->uc_mcontext.gregs[REG_RBX])
+#define RCX_sig(context)     ((context)->uc_mcontext.gregs[REG_RCX])
+#define RDX_sig(context)     ((context)->uc_mcontext.gregs[REG_RDX])
+#define RSI_sig(context)     ((context)->uc_mcontext.gregs[REG_RSI])
+#define RDI_sig(context)     ((context)->uc_mcontext.gregs[REG_RDI])
+#define RBP_sig(context)     ((context)->uc_mcontext.gregs[REG_RBP])
+
+
+#define R8_sig(context)      ((context)->uc_mcontext.gregs[REG_R8])
+#define R9_sig(context)      ((context)->uc_mcontext.gregs[REG_R9])
+#define R10_sig(context)     ((context)->uc_mcontext.gregs[REG_R10])
+#define R11_sig(context)     ((context)->uc_mcontext.gregs[REG_R11])
+#define R12_sig(context)     ((context)->uc_mcontext.gregs[REG_R12])
+#define R13_sig(context)     ((context)->uc_mcontext.gregs[REG_R13])
+#define R14_sig(context)     ((context)->uc_mcontext.gregs[REG_R14])
+#define R15_sig(context)     ((context)->uc_mcontext.gregs[REG_R15])
+
+
+#elif __APPLE__
+# include <sys/ucontext.h>
+#define RIP_sig(context)     (*((unsigned long*)&(context)->uc_mcontext->__ss.__rip))
+#define RSP_sig(context)     (*((unsigned long*)&(context)->uc_mcontext->__ss.__rsp))
+#define TRAP_sig(context)    ((context)->uc_mcontext->__es.__trapno)
+#define ERR_sig(context)     ((context)->uc_mcontext->__es.__err)
+#define EFL_sig(context)     ((context)->uc_mcontext->__ss.__rflags)
+#define CR2_sig(context)     ((char *) info->si_addr)
+
+
+#define RAX_sig(context)     ((context)->uc_mcontext->__ss.__rax)
+#define RBX_sig(context)     ((context)->uc_mcontext->__ss.__rbx)
+#define RCX_sig(context)     ((context)->uc_mcontext->__ss.__rcx)
+#define RDX_sig(context)     ((context)->uc_mcontext->__ss.__rdx)
+#define RSI_sig(context)     ((context)->uc_mcontext->__ss.__rsi)
+#define RDI_sig(context)     ((context)->uc_mcontext->__ss.__rdi)
+#define RBP_sig(context)     ((context)->uc_mcontext->__ss.__rbp)
+#define R8_sig(context)      ((context)->uc_mcontext->__ss.__r8)
+#define R9_sig(context)      ((context)->uc_mcontext->__ss.__r9)
+#define R10_sig(context)     ((context)->uc_mcontext->__ss.__r10)
+#define R11_sig(context)     ((context)->uc_mcontext->__ss.__r11)
+#define R12_sig(context)     ((context)->uc_mcontext->__ss.__r12)
+#define R13_sig(context)     ((context)->uc_mcontext->__ss.__r13)
+#define R14_sig(context)     ((context)->uc_mcontext->__ss.__r14)
+#define R15_sig(context)     ((context)->uc_mcontext->__ss.__r15)
+
+#endif
+
+
+
+#define REG_(name) sprintf(buf + strlen(buf), #name "=%llx, ",(unsigned long long)name##_sig(uc))
+
+//#define REG_(name) sprintf(buf + strlen(buf), #name "=%llx, ", (unsigned long long)uc->uc_mcontext.gregs[REG_##name])
 
 static void sigCatch(int signum, siginfo_t *info, void *context) {
 	static void *callstack[100];

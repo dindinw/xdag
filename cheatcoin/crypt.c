@@ -17,14 +17,14 @@
 
 static EC_GROUP *group;
 
-extern unsigned int xOPENSSL_ia32cap_P[4];
-extern int xOPENSSL_ia32_cpuid(unsigned int *);
+//extern unsigned int xOPENSSL_ia32cap_P[4];
+//extern int xOPENSSL_ia32_cpuid(unsigned int *);
 
 /* инициализация системы шифрования */
 int cheatcoin_crypt_init(int withrandom) {
 	if (withrandom) {
 		uint64_t buf[64];
-		xOPENSSL_ia32_cpuid(xOPENSSL_ia32cap_P);
+		//xOPENSSL_ia32_cpuid(xOPENSSL_ia32cap_P);
 		cheatcoin_generate_random_array(buf, sizeof(buf));
 		cheatcoin_debug("Seed  : [%s]", cheatcoin_log_array(buf, sizeof(buf)));
 		RAND_seed(buf, sizeof(buf));

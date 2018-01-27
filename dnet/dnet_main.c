@@ -55,6 +55,9 @@ static void daemonize(void) {
 	signal(SIGUSR1, SIG_IGN);
 	signal(SIGUSR2, SIG_IGN);
 	signal(SIGTSTP, SIG_IGN); /* ignore tty signals */
+#ifdef __APPLE__	
+#define SIGPOLL SIGIO
+#endif
 	signal(SIGPOLL, SIG_IGN);
 	signal(SIGTTIN, SIG_IGN);
 	signal(SIGTTOU, SIG_IGN);

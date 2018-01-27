@@ -19,6 +19,20 @@ int dnet_tap_open(int tap_number) {
 
 #include <errno.h>
 #include <sys/ioctl.h>
+#ifdef __APPLE__
+#include <net/if_types.h>
+#include <net/if_arp.h>
+#include <net/if_dl.h>
+#include <net/if_media.h>
+#include <net/dlil.h>
+#include <net/ethernet.h>
+#include <sys/kern_control.h>
+#include <net/if_utun.h>
+#include <sys/sys_domain.h>
+#include <netinet/ip.h>
+#include <sys/uio.h>
+
+#else
 #include <linux/if.h>
 #include <linux/if_tun.h>
 #include <linux/kd.h>
@@ -47,6 +61,7 @@ int dnet_tap_open(int tap_number) {
    /* this is the special file descriptor that the caller will use to talk with the virtual interface */
 	return fd;
 }
+#endif
 
 #else
 

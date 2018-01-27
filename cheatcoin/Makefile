@@ -17,12 +17,10 @@ sources = \
 	netdb.c						\
 	pool.c						\
 	sha256.c					\
-	sha256-mb-x86_64.s                              \
 	storage.c					\
 	sync.c						\
 	transport.c					\
 	wallet.c					\
-	x86_64cpuid.s					\
 	$(dnet)/dnet_crypt.c		\
 	$(dnet)/dnet_database.c		\
 	$(dnet)/dnet_main.c			\
@@ -82,12 +80,15 @@ headers = \
 
 flags = -std=gnu11 -O3 -DDFSTOOLS -DCHEATCOIN -DNDEBUG -g -lpthread -lcrypto -lssl -lm -Wall -Wmissing-prototypes -Wno-unused-result -Wl,--export-dynamic
 
+flags_mac = -std=gnu11 -O3 -DDFSTOOLS -DCHEATCOIN -DNDEBUG -g -lpthread -lcrypto -lssl -lm -Wall -Wmissing-prototypes -Wno-unused-result -Wl,
 
 all: xdag
 
 xdag: $(sources) $(headers) Makefile
 	gcc -o xdag $(sources) -DSHA256_USE_OPENSSL_TXFM -DSHA256_OPENSSL_MBLOCK $(flags)
 
+xdag_mac: $(sources) $(headers) Makefile
+	gcc -o xdag $(sources) -DSHA256_USE_OPENSSL_TXFM -DSHA256_OPENSSL_MBLOCK $(flags_mac) -I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib 
 clean:
 	rm xdag
 
