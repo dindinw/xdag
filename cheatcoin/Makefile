@@ -96,6 +96,18 @@ xdag: $(sources) $(asm_src) $(headers) Makefile
 
 xdag_mac: $(sources) $(asm_mac_src) $(headers) Makefile
 	gcc -o xdag $(sources) $(asm_mac_src) -DSHA256_USE_OPENSSL_TXFM -DSHA256_OPENSSL_MBLOCK $(flags_mac) -I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib 
+
+xdag_n : xdag_n1 xdag_n2 xdag_n3
+
+xdag_n1: $(sources) $(asm_mac_src) $(headers) Makefile
+	gcc -o xdag_n1 $(sources) $(asm_mac_src)  $(flags_mac) -I/opt/openssl/include -L/opt/openssl/lib
+
+xdag_n2: $(sources) $(asm_mac_src) $(headers) Makefile
+	gcc -o xdag_n2 $(sources) $(asm_mac_src)  $(flags_mac) -DSHA256_USE_OPENSSL_TXFM -I/opt/openssl/include -L/opt/openssl/lib
+
+xdag_n3: $(sources) $(asm_mac_src) $(headers) Makefile
+	gcc -o xdag_n3 $(sources) $(asm_mac_src)  $(flags_mac) -DSHA256_OPENSSL_MBLOCK -I/opt/openssl/include -L/opt/openssl/lib
+
 clean:
 	rm xdag
 
