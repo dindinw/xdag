@@ -77,6 +77,7 @@ extern int cheatcoin_set_log_level(int level) {
 #include <ucontext.h>
 
 #define RIP_sig(context)     ((context)->uc_mcontext.gregs[REG_RIP])
+#define RSP_sig(context)     ((context)->uc_mcontext.gregs[REG_RSP])
 #define EFL_sig(context)     ((context)->uc_mcontext.gregs[REG_EFL])
 #define ERR_sig(context)     ((context)->uc_mcontext.gregs[REG_ERR])
 #define TRAP_sig(context)    ((context)->uc_mcontext.gregs[REG_TRAPNO])

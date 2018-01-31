@@ -119,7 +119,7 @@ add_executable(
 )
 endif()
 
-target_link_libraries(${PROJECT_NAME} pthread crypto ssl) 
+target_link_libraries(${PROJECT_NAME} m pthread crypto ssl) 
 
 add_executable(
    cgi_stats
