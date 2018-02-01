@@ -12,7 +12,7 @@ extern void test_cheatcoin_address2hash(const char *address, cheatcoin_hash_t ha
 
 int main (int argc, char **argv)
 {
-    int n;
+    int n = 0;
     cheatcoin_address_init();
 
     // test address2hash
