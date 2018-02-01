@@ -18,7 +18,7 @@ int main (int argc, char **argv)
     // test address2hash
     cheatcoin_hash_t hash;
     test_cheatcoin_address2hash(FUND_ADDRESS,hash);
-    printf("hash_llu=%llu\n",*hash);
+    printf("hash_llu=%llu\n",(long long )*hash);
     printf("%s\n",cheatcoin_hash2address(hash));
     test_cheatcoin_address2hash("3Bh+hU9SCFEgTpFPiS2mOfHT2IfYAwOj",hash);
     printf("%s\n",cheatcoin_hash2address(hash));
@@ -42,7 +42,8 @@ int main (int argc, char **argv)
     return (n == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
-void test_cheatcoin_address2hash(const char *address, cheatcoin_hash_t hash){
-    cheatcoin_address2hash(address,hash);
-    printf("%016llx%016llx%016llx%016llx\n",hash[3],hash[2],hash[1],hash[0]);
+void test_cheatcoin_address2hash(const char *address, cheatcoin_hash_t h){
+    cheatcoin_address2hash(address,h);
+    printf("%016llx%016llx%016llx%016llx\n",
+           (unsigned long long)h[3], (unsigned long long)h[2], (unsigned long long)h[1], (unsigned long long)h[0]);
 }
