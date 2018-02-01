@@ -36,48 +36,12 @@
 #include "wallet.h"
 #include "log.h"
 
-#define N_MINERS		4096
-#define START_N_MINERS	256
-#define START_N_MINERS_IP 8
-#define N_CONFIRMATIONS	CHEATCOIN_POOL_N_CONFIRMATIONS
-#define MINERS_PWD		"minersgonnamine"
-#define SECTOR0_BASE	0x1947f3acu
-#define SECTOR0_OFFSET	0x82e9d1b5u
-#define HEADER_WORD		0x3fca9e2bu
-#define DATA_SIZE		(sizeof(struct cheatcoin_field) / sizeof(uint32_t))
-#define SEND_PERIOD		10 /* период в секундах, с которым майнер посылает пулу результаты */
-#define FUND_ADDRESS	"FQglVQtb60vQv2DOWEUL7yh3smtj7g1s" /* адрес фонда сообщества */
 
-enum miner_state {
-	MINER_BLOCK		= 1,
-	MINER_ARCHIVE	= 2,
-	MINER_FREE		= 4,
-	MINER_BALANCE	= 8,
-	MINER_ADDRESS	= 0x10,
-};
-
-struct miner {
-	double maxdiff[N_CONFIRMATIONS];
-	struct cheatcoin_field id;
-	uint32_t data[DATA_SIZE];
-	double prev_diff;
-	cheatcoin_time_t main_time;
-	uint64_t nfield_in;
-	uint64_t nfield_out;
-	uint64_t ntask;
-	struct cheatcoin_block *block;
-	uint32_t ip;
-	uint32_t prev_diff_count;
-	uint16_t port;
-	uint16_t state;
-	uint8_t data_size;
-	uint8_t block_size;
-};
 
 struct cheatcoin_pool_task g_cheatcoin_pool_task[2];
 uint64_t g_cheatcoin_pool_ntask;
 int g_cheatcoin_mining_threads = 0;
-cheatcoin_hash_t g_cheatcoin_mined_hashes[N_CONFIRMATIONS], g_cheatcoin_mined_nonce[N_CONFIRMATIONS];
+cheatcoin_hash_t g_cheatcoin_mined_hashes[CHEATCOIN_POOL_N_CONFIRMATIONS], g_cheatcoin_mined_nonce[CHEATCOIN_POOL_N_CONFIRMATIONS];
 
 /* 1 - программа работает как пул */
 static int g_cheatcoin_pool = 0, g_max_nminers = START_N_MINERS, g_max_nminers_ip = START_N_MINERS_IP, g_nminers = 0, g_socket = -1,
@@ -104,7 +68,7 @@ static inline void set_share(struct miner *m, struct cheatcoin_pool_task *task, 
 	}
 	if (m->main_time <= t) {
 		double diff = ((uint64_t *)hash)[2];
-		int i = t & (N_CONFIRMATIONS - 1);
+		int i = t & (CHEATCOIN_POOL_N_CONFIRMATIONS - 1);
 		diff = ldexp(diff, -64);
 		diff += ((uint64_t *)hash)[3];
 		if (diff < 1) diff = 1;
@@ -256,7 +220,7 @@ static int pay_miners(cheatcoin_time_t t) {
 	double *diff, *prev_diff, sum, prev_sum, topay;
 	nminers = g_nminers;
 	if (!nminers) return -1;
-	n = t & (N_CONFIRMATIONS - 1);
+	n = t & (CHEATCOIN_POOL_N_CONFIRMATIONS - 1);
 	h = g_cheatcoin_mined_hashes[n];
 	nonce = g_cheatcoin_mined_nonce[n];
 	balance = cheatcoin_get_balance(h);
@@ -346,12 +310,12 @@ static void *pool_block_thread(void *arg) {
 		task = &g_cheatcoin_pool_task[ntask & 1];
 		t = task->main_time;
 		if (t > t0) {
-			uint64_t *h = g_cheatcoin_mined_hashes[(t - N_CONFIRMATIONS + 1) & (N_CONFIRMATIONS - 1)];
+			uint64_t *h = g_cheatcoin_mined_hashes[(t - CHEATCOIN_POOL_N_CONFIRMATIONS + 1) & (CHEATCOIN_POOL_N_CONFIRMATIONS - 1)];
 			done = 1;
 			t0 = t;
-			res = pay_miners(t - N_CONFIRMATIONS + 1);
+			res = pay_miners(t - CHEATCOIN_POOL_N_CONFIRMATIONS + 1);
 			cheatcoin_info("%s: %016llx%016llx%016llx%016llx t=%llx res=%d", (res ? "Nopaid" : "Paid  "),
-				h[3], h[2], h[1], h[0], (t - N_CONFIRMATIONS + 1) << 16 | 0xffff, res);
+				h[3], h[2], h[1], h[0], (t - CHEATCOIN_POOL_N_CONFIRMATIONS + 1) << 16 | 0xffff, res);
 		}
 		pthread_mutex_lock(&g_pool_mutex);
 		if (g_firstb) {
@@ -507,7 +471,7 @@ static void *pool_net_thread(void *arg) {
 		for (i = 0, count = 1, i0 = -1; i < g_nminers; ++i) {
 			m = g_miners + i;
 			if (m->state & MINER_FREE) { if (i0 < 0) i0 = i; }
-			else if (m->state & MINER_ARCHIVE && t - m->main_time > N_CONFIRMATIONS) { if (i0 < 0) i0 = i; }
+			else if (m->state & MINER_ARCHIVE && t - m->main_time > CHEATCOIN_POOL_N_CONFIRMATIONS) { if (i0 < 0) i0 = i; }
 			else if (m->ip == peeraddr.sin_addr.s_addr && ++count > g_max_nminers_ip) goto closefd;
 		}
 		if (i0 >= 0) i = i0;
@@ -847,7 +811,7 @@ static int print_miner(FILE *out, int n, struct miner *m) {
 	char buf[32], buf2[64];
 	uint32_t i = m->ip;
 	int j;
-	for (j = 0; j < N_CONFIRMATIONS; ++j) if (m->maxdiff[j] > 0) { sum += m->maxdiff[j]; count++; }
+	for (j = 0; j < CHEATCOIN_POOL_N_CONFIRMATIONS; ++j) if (m->maxdiff[j] > 0) { sum += m->maxdiff[j]; count++; }
 	sprintf(buf, "%u.%u.%u.%u:%u", i & 0xff, i >> 8 & 0xff, i >> 16 & 0xff, i >> 24 & 0xff, ntohs(m->port));
 	sprintf(buf2, "%llu/%llu", (unsigned long long)m->nfield_in * sizeof(struct cheatcoin_field),
 			(unsigned long long)m->nfield_out * sizeof(struct cheatcoin_field));

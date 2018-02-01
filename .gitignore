@@ -1,5 +1,1 @@
-*.dat
-*.log
-storage*
-cheatcoin/xdag
-xdag*/
+build/

@@ -87,7 +87,7 @@ headers = \
 
 flags = -std=gnu11 -O3 -DDFSTOOLS -DCHEATCOIN -DNDEBUG -g -lpthread -lcrypto -lssl -lm -Wall -Wmissing-prototypes -Wno-unused-result -Wl,--export-dynamic
 
-flags_mac = -std=gnu11 -O3 -DDFSTOOLS -DCHEATCOIN -DNDEBUG -g -lpthread -lcrypto -lssl -lm -Wall -Wmissing-prototypes -Wno-unused-result -Wl,
+flags_mac = -std=gnu11 -O3 -DDFSTOOLS -DCHEATCOIN -g -lpthread -lcrypto -lssl -lm -Wall -Wmissing-prototypes -Wno-unused-result -Wl,
 
 all: xdag
 
@@ -95,7 +95,7 @@ xdag: $(sources) $(asm_src) $(headers) Makefile
 	gcc -o xdag $(sources) $(asm_src) -DSHA256_USE_OPENSSL_TXFM -DSHA256_OPENSSL_MBLOCK $(flags)
 
 xdag_mac: $(sources) $(asm_mac_src) $(headers) Makefile
-	gcc -o xdag $(sources) $(asm_mac_src) -DSHA256_USE_OPENSSL_TXFM -DSHA256_OPENSSL_MBLOCK $(flags_mac) -I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib 
+	gcc -o xdag_mac $(sources) $(asm_mac_src) -DSHA256_USE_OPENSSL_TXFM -DSHA256_OPENSSL_MBLOCK $(flags_mac) -I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib
 
 xdag_n : xdag_n1 xdag_n2 xdag_n3
 
