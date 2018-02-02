@@ -1,6 +1,6 @@
-#include "../cheatcoin/address.h"
-#include "../cheatcoin/pool.h"
-#include "../cheatcoin/log.h"
+#include "../../cheatcoin/address.h"
+#include "../../cheatcoin/pool.h"
+#include "../../cheatcoin/log.h"
 
 #include <stdlib.h>
 #include <stdio.h>

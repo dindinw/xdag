@@ -5,7 +5,8 @@ enable_language(C ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_FLAGS "-std=gnu11 -O3 -g -Wall -Wmissing-prototypes -Wno-unused-result")
 
-add_subdirectory(test)
+add_subdirectory(test/test_address)
+add_subdirectory(test/test_block)
 
 set(OPENSSL_ROOT_DIR "/opt/openssl/")
 find_package(OpenSSL REQUIRED)
