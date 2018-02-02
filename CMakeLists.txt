@@ -96,12 +96,21 @@ set(SHA256_MAC_ASM_SOURCES
     cheatcoin/x86_64cpuid-mac.s
 )
 
+OPTION(DEBUG
+    "Build the project using debugging code"
+    OFF)
+if(DEBUG)
+    MESSAGE("Adding Debug flag...")
+    SET(CMAKE_BUILD_TYPE Debug)
+    MESSAGE("Build type is " ${CMAKE_BUILD_TYPE})
+else()
+    add_definitions(-DNDEBUG)
+endif(DEBUG)
+
 add_definitions(-DDFSTOOLS)
 add_definitions(-DCHEATCOIN)
-add_definitions(-DNDEBUG)
 add_definitions(-DSHA256_USE_OPENSSL_TXFM)
 add_definitions(-DSHA256_OPENSSL_MBLOCK)
-
 
 if(APPLE)
 add_executable(
