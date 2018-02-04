@@ -1,4 +1,13 @@
 cmake_minimum_required(VERSION 3.7)
+
+# Use a different compiler
+# http://www.cmake.org/Wiki/CMake_FAQ#How_do_I_use_a_different_compiler.3F
+# it must be done before any language is set (before project|enable_language command)
+# set(CMAKE_C_COMPILER "gcc-7")
+# set(CMAKE_CXX_COMPILER "g++-7")
+# usually avoid this by using environment variables:
+#   mkdir build-gcc && cd build-gcc && CC=gcc-7 CXX=g++-7 cmake ..
+
 project(daggercoin) 
 enable_language(C ASM)
 
