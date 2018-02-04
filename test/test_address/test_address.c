@@ -33,7 +33,9 @@ int main (int argc, char **argv)
 
 
     // test debug log
+    char *ptr;
     g_progname = strdup(argv[0]);
+    while ((ptr = strchr(g_progname, '/')) || (ptr = strchr(g_progname, '\\'))) g_progname = ptr + 1;
     cheatcoin_set_log_level(9);
 
     cheatcoin_mess("meg...");

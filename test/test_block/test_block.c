@@ -378,14 +378,14 @@ static void *print_block_callback(void *block, void *data) {
 }
 
 
-
 int main (int argc, char **argv)
 {
     int n = 0;
     cheatcoin_address_init();
-    //cheatcoin_address_init();
     // test debug log
+    char *ptr;
     g_progname = strdup(argv[0]);
+    while ((ptr = strchr(g_progname, '/')) || (ptr = strchr(g_progname, '\\'))) g_progname = ptr + 1;
     cheatcoin_set_log_level(9);
     cheatcoin_mess("meg...");
     cheatcoin_info("info...");
